@@ -160,18 +160,18 @@ const BulkActions: React.FC<BulkActionsProps> = ({ selectedLeads, statuses, onAc
 
   return (
     <>
-    <div className="bg-gray-800 p-4 rounded-lg mb-4 flex items-center space-x-4">
-      <div className="flex items-center text-sm text-gray-400">
+    <div className="glass-panel neon-border-strong rounded-xl mb-4 p-4 flex flex-col gap-3 sm:flex-row sm:items-center animate-fade-in-up">
+      <div className="flex items-center text-sm text-[#00f0ff]">
         <Users size={16} className="mr-2" />
-        <span>{selectedLeads.length} leads selected</span>
+        <span className="font-medium">{selectedLeads.length} leads selected</span>
       </div>
 
       <div className="flex-1" />
 
-      <div className="flex items-center space-x-4">
+      <div className="flex flex-wrap items-center gap-2">
         <select
           onChange={(e) => handleStatusChange(e.target.value)}
-          className="bg-gray-700 rounded px-3 py-2 text-sm"
+          className="bg-[#111827] neon-border rounded-lg px-3 py-2 text-sm text-[#e8edf5] focus:outline-none focus:border-[#00f0ff]/40 transition-colors duration-200 cursor-pointer"
           defaultValue=""
         >
           <option value="" disabled>Change Status</option>
@@ -191,7 +191,7 @@ const BulkActions: React.FC<BulkActionsProps> = ({ selectedLeads, statuses, onAc
         
         <button
           onClick={() => setIsRandomAssignModalOpen(true)}
-          className="px-3 py-2 bg-purple-600 rounded flex items-center space-x-2 hover:bg-purple-500 text-sm"
+          className="btn-futuristic px-3 py-2 bg-[#00f0ff]/10 border border-[#00f0ff]/30 rounded-lg flex items-center gap-2 hover:bg-[#00f0ff]/20 text-[#00f0ff] text-sm transition-all duration-300"
         >
           <Shuffle size={14} />
           <span>Randomly Assign</span>
@@ -200,7 +200,7 @@ const BulkActions: React.FC<BulkActionsProps> = ({ selectedLeads, statuses, onAc
         {isAdmin && (
           <button
             onClick={handleDeleteLeads}
-            className="px-3 py-2 bg-red-600 rounded flex items-center space-x-2 hover:bg-red-500 text-sm"
+            className="btn-futuristic px-3 py-2 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-2 hover:bg-red-500/20 text-red-400 text-sm transition-all duration-300"
           >
             <Trash2 size={14} />
             <span>Delete Selected</span>

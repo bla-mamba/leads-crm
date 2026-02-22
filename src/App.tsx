@@ -17,7 +17,7 @@ import Settings from './pages/Settings';
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen h-screen bg-gray-900 text-white">
+    <div className="flex min-h-screen h-screen bg-[#0a0e17] text-[#e8edf5]">
       <Sidebar />
       <main className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-auto">

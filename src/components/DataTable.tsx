@@ -124,7 +124,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
             type="checkbox"
             checked={table.getIsAllPageRowsSelected()}
             onChange={table.getToggleAllPageRowsSelectedHandler()}
-            className="rounded bg-gray-700 border-gray-600"
+            className="rounded bg-[#111827] border-[#00f0ff]/20 text-[#00f0ff] focus:ring-[#00f0ff]/30 focus:ring-offset-0 cursor-pointer accent-[#00f0ff]"
           />
         ),
         cell: ({ row }) => (
@@ -132,7 +132,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
             type="checkbox"
             checked={row.getIsSelected()}
             onChange={row.getToggleSelectedHandler()}
-            className="rounded bg-gray-700 border-gray-600"
+            className="rounded bg-[#111827] border-[#00f0ff]/20 text-[#00f0ff] focus:ring-[#00f0ff]/30 focus:ring-offset-0 cursor-pointer accent-[#00f0ff]"
           />
         ),
         enableSorting: false,
@@ -261,6 +261,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
       [columnId]: ['', '']
     }));
   };
+
   const renderFilterPopover = (columnId: string) => {
     const column = table.getColumn(columnId);
     if (!column) return null;
@@ -278,15 +279,14 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
               if (filterRef) filterRef.current = node;
             }}
             style={floatingStyles}
-            className="z-50 bg-gray-800 rounded-lg shadow-lg border border-gray-700 w-80"
+            className="z-50 glass-panel rounded-xl shadow-2xl shadow-[#00f0ff]/5 neon-border-strong w-80 animate-fade-in-up"
           >
             <div className="p-4">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-medium text-white">Filter by Date</h4>
-                <div className="flex space-x-2">
+                <h4 className="text-sm font-semibold text-[#e8edf5]">Filter by Date</h4>
+                <div className="flex gap-2">
                   <button
                     onClick={() => {
-                      // Check all options
                       const allOptions = DATE_FILTER_OPTIONS.map(opt => opt.value);
                       setSelectedDateOptions(prev => ({
                         ...prev,
@@ -294,7 +294,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
                       }));
                       applyDateFilter(columnId, allOptions, currentCustomRange);
                     }}
-                    className="px-2 py-1 bg-gray-600 hover:bg-gray-500 rounded text-xs text-white"
+                    className="px-2 py-1 bg-[#00f0ff]/10 hover:bg-[#00f0ff]/20 border border-[#00f0ff]/20 rounded-md text-xs text-[#00f0ff] transition-all duration-200"
                   >
                     Check All
                   </button>
@@ -306,7 +306,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
                       }));
                       applyDateFilter(columnId, [], currentCustomRange);
                     }}
-                    className="px-2 py-1 bg-gray-600 hover:bg-gray-500 rounded text-xs text-white"
+                    className="px-2 py-1 bg-[#111827] hover:bg-[#1a2332] border border-[#1e293b] rounded-md text-xs text-[#7b8ba3] transition-all duration-200"
                   >
                     Uncheck All
                   </button>
@@ -314,23 +314,23 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
               </div>
               
               {/* Predefined Options */}
-              <div className="space-y-2 mb-4 max-h-48 overflow-y-auto">
+              <div className="space-y-1 mb-4 max-h-48 overflow-y-auto">
                 {DATE_FILTER_OPTIONS.map((option) => (
-                  <label key={option.value} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-700 p-1 rounded">
+                  <label key={option.value} className="flex items-center gap-2 cursor-pointer hover:bg-[#00f0ff]/5 p-1.5 rounded-lg transition-colors duration-150">
                     <input
                       type="checkbox"
                       checked={currentOptions.includes(option.value)}
                       onChange={(e) => handleDateOptionChange(columnId, option.value, e.target.checked)}
-                      className="rounded bg-gray-600 border-gray-500"
+                      className="rounded bg-[#111827] border-[#00f0ff]/20 text-[#00f0ff] accent-[#00f0ff]"
                     />
-                    <span className="text-sm text-white">{option.label}</span>
+                    <span className="text-sm text-[#e8edf5]">{option.label}</span>
                   </label>
                 ))}
               </div>
               
               {/* Custom Date Range */}
-              <div className="border-t border-gray-700 pt-3">
-                <label className="flex items-center space-x-2 cursor-pointer hover:bg-gray-700 p-1 rounded mb-2">
+              <div className="border-t border-[#00f0ff]/10 pt-3">
+                <label className="flex items-center gap-2 cursor-pointer hover:bg-[#00f0ff]/5 p-1.5 rounded-lg mb-2 transition-colors duration-150">
                   <input
                     type="checkbox"
                     checked={currentCustomRange[0] !== '' || currentCustomRange[1] !== ''}
@@ -339,29 +339,29 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
                         handleCustomDateChange(columnId, '', '');
                       }
                     }}
-                    className="rounded bg-gray-600 border-gray-500"
+                    className="rounded bg-[#111827] border-[#00f0ff]/20 text-[#00f0ff] accent-[#00f0ff]"
                   />
-                  <span className="text-sm text-white font-medium">Custom</span>
+                  <span className="text-sm text-[#e8edf5] font-medium">Custom</span>
                 </label>
                 
                 <div className="ml-6 space-y-2">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">From:</label>
+                    <label className="block text-xs text-[#7b8ba3] mb-1">From:</label>
                     <input
                       type="date"
                       value={currentCustomRange[0]}
                       onChange={(e) => handleCustomDateChange(columnId, e.target.value, currentCustomRange[1])}
-                      className="w-full bg-gray-700 rounded px-2 py-1 text-sm text-white"
+                      className="w-full bg-[#111827] neon-border rounded-lg px-3 py-1.5 text-sm text-[#e8edf5] focus:outline-none focus:border-[#00f0ff]/40 transition-colors duration-200"
                       placeholder="mm/dd/yyyy"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">To:</label>
+                    <label className="block text-xs text-[#7b8ba3] mb-1">To:</label>
                     <input
                       type="date"
                       value={currentCustomRange[1]}
                       onChange={(e) => handleCustomDateChange(columnId, currentCustomRange[0], e.target.value)}
-                      className="w-full bg-gray-700 rounded px-2 py-1 text-sm text-white"
+                      className="w-full bg-[#111827] neon-border rounded-lg px-3 py-1.5 text-sm text-[#e8edf5] focus:outline-none focus:border-[#00f0ff]/40 transition-colors duration-200"
                       placeholder="mm/dd/yyyy"
                     />
                   </div>
@@ -371,7 +371,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
               <div className="flex justify-end mt-4">
                 <button
                   onClick={() => clearDateFilter(columnId)}
-                  className="px-3 py-1 bg-red-600 hover:bg-red-500 rounded text-xs text-white"
+                  className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg text-xs text-red-400 transition-all duration-200"
                 >
                   Clear Filter
                 </button>
@@ -381,6 +381,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
         </FloatingPortal>
       );
     }
+
     const uniqueValues = Array.from(column.getFacetedUniqueValues().keys())
       .filter(value => value !== null && value !== undefined)
       .sort();
@@ -393,21 +394,21 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
             if (filterRef) filterRef.current = node;
           }}
           style={floatingStyles}
-          className="z-50 bg-gray-800 rounded-lg shadow-lg border border-gray-700 w-64 max-h-96 overflow-auto"
+          className="z-50 glass-panel rounded-xl shadow-2xl shadow-[#00f0ff]/5 neon-border-strong w-64 max-h-96 overflow-auto animate-fade-in-up"
         >
-          <div className="p-3 border-b border-gray-700">
+          <div className="p-3 border-b border-[#00f0ff]/10">
             <input
               type="text"
               value={(column.getFilterValue() as string) ?? ''}
               onChange={e => column.setFilterValue(e.target.value)}
               placeholder="Search..."
-              className="w-full bg-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
+              className="w-full bg-[#111827] neon-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#00f0ff]/40 text-[#e8edf5] placeholder-[#4a5568] transition-colors duration-200"
             />
           </div>
           
           <div className="p-2">
             {uniqueValues.map((value) => (
-              <label key={value} className="flex items-center px-2 py-1 hover:bg-gray-700 rounded cursor-pointer">
+              <label key={value} className="flex items-center px-2 py-1.5 hover:bg-[#00f0ff]/5 rounded-lg cursor-pointer transition-colors duration-150">
                 <input
                   type="checkbox"
                   checked={((column.getFilterValue() as string[]) || []).includes(value)}
@@ -419,9 +420,9 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
                       column.setFilterValue(filterValue.filter(v => v !== value));
                     }
                   }}
-                  className="rounded bg-gray-600 border-gray-500 mr-2"
+                  className="rounded bg-[#111827] border-[#00f0ff]/20 text-[#00f0ff] mr-2 accent-[#00f0ff]"
                 />
-                <span className="text-sm text-white">{value}</span>
+                <span className="text-sm text-[#e8edf5]">{value}</span>
               </label>
             ))}
           </div>
@@ -434,29 +435,31 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
     <div className="flex flex-col h-full">
       <div className="overflow-auto flex-1" ref={tableRef}>
         <table className="w-full text-sm">
-          <thead className="sticky top-0 bg-gray-800 z-10">
+          <thead className="sticky top-0 z-10" style={{ background: 'linear-gradient(180deg, #0d1320 0%, #0d1320 90%, transparent 100%)' }}>
             {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id} className="border-b border-gray-700">
+              <tr key={headerGroup.id} className="border-b border-[#00f0ff]/10">
                 {headerGroup.headers.map(header => (
                   <th
                     key={header.id}
-                    className="px-4 py-3 text-left font-medium text-gray-300"
+                    className="px-4 py-3 text-left font-semibold text-[#7b8ba3] text-xs uppercase tracking-wider"
                     style={{ width: header.getSize() }}
                   >
                     {header.isPlaceholder ? null : (
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2">
                         <div
                           className={
                             header.column.getCanSort()
-                              ? 'flex items-center space-x-1 cursor-pointer select-none'
+                              ? 'flex items-center gap-1 cursor-pointer select-none group'
                               : ''
                           }
                           onClick={header.column.getToggleSortingHandler()}
                         >
-                          <span>{flexRender(header.column.columnDef.header, header.getContext())}</span>
+                          <span className="group-hover:text-[#00f0ff] transition-colors duration-200">
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                          </span>
                           {{
-                            asc: <ChevronUp size={16} />,
-                            desc: <ChevronDown size={16} />,
+                            asc: <ChevronUp size={14} className="text-[#00f0ff]" />,
+                            desc: <ChevronDown size={14} className="text-[#00f0ff]" />,
                           }[header.column.getIsSorted() as string] ?? null}
                         </div>
                         
@@ -467,10 +470,10 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
                                 e.stopPropagation();
                                 setActiveFilter(activeFilter === header.column.id ? null : header.column.id);
                               }}
-                              className={`filter-button text-gray-400 hover:text-white ${header.column.getFilterValue() ? 'text-blue-400' : ''}`}
+                              className={`filter-button text-[#4a5568] hover:text-[#00f0ff] transition-colors duration-200 ${header.column.getFilterValue() ? 'text-[#00f0ff]' : ''}`}
                             >
                               {header.column.getFilterValue() ? (
-                                <X size={14} onClick={(e) => {
+                                <X size={14} className="text-[#00f0ff]" onClick={(e) => {
                                   e.stopPropagation();
                                   header.column.setFilterValue(null);
                                 }} />
@@ -489,15 +492,21 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map(row => (
+            {table.getRowModel().rows.map((row, index) => (
               <tr
                 key={row.id}
-                className="border-b border-gray-700 hover:bg-gray-800 transition-colors"
+                className="table-row-hover border-b border-[#0d1320]/80 transition-all duration-200"
+                style={{
+                  animationDelay: `${Math.min(index * 20, 500)}ms`,
+                  background: row.getIsSelected()
+                    ? 'linear-gradient(90deg, rgba(0,240,255,0.08), rgba(0,240,255,0.03), transparent)'
+                    : undefined,
+                }}
               >
                 {row.getVisibleCells().map(cell => (
                   <td 
                     key={cell.id} 
-                    className="px-4 py-3 text-white"
+                    className="px-4 py-3 text-[#e8edf5] text-sm"
                     style={{ width: cell.column.getSize() }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -509,34 +518,38 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
         </table>
       </div>
       
-      <div className="mt-4 flex items-center justify-between px-4 py-3 bg-gray-800 border-t border-gray-700">
-        <div className="flex items-center space-x-2 text-sm text-gray-400">
+      {/* Pagination Footer */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-t border-[#00f0ff]/10 bg-[#0d1320]/80 backdrop-blur-sm">
+        <div className="flex flex-wrap items-center gap-2 text-xs md:text-sm text-[#7b8ba3]">
           <span>
-            {table.getSelectedRowModel().rows.length} of {table.getRowModel().rows.length} row(s) selected
+            <span className="text-[#00f0ff] font-medium">{table.getSelectedRowModel().rows.length}</span>
+            {' '}of{' '}
+            <span className="text-[#e8edf5]">{table.getRowModel().rows.length}</span>
+            {' '}row(s) selected
           </span>
-          <span className="text-gray-600">|</span>
-          <span>{table.getFilteredRowModel().rows.length} filtered leads</span>
+          <span className="text-[#1e293b]">|</span>
+          <span><span className="text-[#00f0ff] font-medium">{table.getFilteredRowModel().rows.length}</span> filtered leads</span>
           {table.getSelectedRowModel().rows.length < table.getFilteredRowModel().rows.length && (
             <>
-              <span className="text-gray-600">|</span>
+              <span className="text-[#1e293b]">|</span>
               <button
                 onClick={() => table.toggleAllRowsSelected(true)}
-                className="flex items-center space-x-1 text-blue-400 hover:text-blue-300 underline"
+                className="flex items-center gap-1 text-[#00f0ff] hover:text-[#00f0ff]/80 underline underline-offset-2 transition-colors duration-200"
               >
                 <CheckSquare size={14} />
                 <span>Select all {table.getFilteredRowModel().rows.length} leads</span>
               </button>
             </>
           )}
-          <span className="text-gray-600">|</span>
+          <span className="text-[#1e293b]">|</span>
           <select
             value={paginationState.pageSize}
             onChange={e => setPaginationState(prev => ({
               ...prev,
               pageSize: Number(e.target.value),
-              pageIndex: 0, // Reset to first page when changing page size
+              pageIndex: 0,
             }))}
-            className="bg-gray-700 rounded px-2 py-1 text-sm"
+            className="bg-[#111827] neon-border rounded-lg px-2 py-1 text-xs md:text-sm text-[#e8edf5] focus:outline-none focus:border-[#00f0ff]/40 transition-colors duration-200 cursor-pointer"
           >
             {[10, 25, 50, 100, 250].map(size => (
               <option key={size} value={size}>
@@ -552,32 +565,32 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
           </select>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-1">
           <button
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
-            className="p-1 rounded hover:bg-gray-700 disabled:opacity-50"
+            className="p-1.5 rounded-lg hover:bg-[#00f0ff]/10 disabled:opacity-30 disabled:hover:bg-transparent text-[#7b8ba3] hover:text-[#00f0ff] transition-all duration-200"
             title="Go to first page"
           >
-            <ChevronsLeft size={20} />
+            <ChevronsLeft size={18} />
           </button>
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="p-1 rounded hover:bg-gray-700 disabled:opacity-50"
+            className="p-1.5 rounded-lg hover:bg-[#00f0ff]/10 disabled:opacity-30 disabled:hover:bg-transparent text-[#7b8ba3] hover:text-[#00f0ff] transition-all duration-200"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={18} />
           </button>
-          <span className="text-sm text-gray-400">
-            Page {table.getState().pagination.pageIndex + 1} of{' '}
-            {table.getPageCount()}
+          <span className="text-xs md:text-sm text-[#7b8ba3] px-3">
+            Page <span className="text-[#00f0ff] font-medium">{table.getState().pagination.pageIndex + 1}</span> of{' '}
+            <span className="text-[#e8edf5]">{table.getPageCount()}</span>
           </span>
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="p-1 rounded hover:bg-gray-700 disabled:opacity-50"
+            className="p-1.5 rounded-lg hover:bg-[#00f0ff]/10 disabled:opacity-30 disabled:hover:bg-transparent text-[#7b8ba3] hover:text-[#00f0ff] transition-all duration-200"
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={18} />
           </button>
         </div>
       </div>

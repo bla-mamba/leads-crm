@@ -237,7 +237,7 @@ const SalesLeads = () => {
         setLoading(false);
       };
 
-      // Fire background load (don’t block UI)
+      // Fire background load (don't block UI)
       loadRemaining();
     } catch (error) {
       console.error("Error fetching leads:", error);
@@ -457,7 +457,7 @@ const SalesLeads = () => {
             href={`/lead/${row.original.id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-400 cursor-pointer hover:underline"
+            className="text-[#00f0ff] cursor-pointer hover:underline transition-colors duration-200 hover:text-[#00f0ff]/80"
           >
             {row.original.id}
           </a>
@@ -478,17 +478,17 @@ const SalesLeads = () => {
         header: "Email",
         accessorKey: "email",
         cell: ({ row }) => (
-          <div className="flex items-center space-x-2">
-            <span>{row.original.email}</span>
+          <div className="flex items-center gap-2">
+            <span className="truncate">{row.original.email}</span>
             <button
               onClick={() =>
                 copyToClipboard(row.original.email, "Email", row.original.id)
               }
-              className="text-gray-400 hover:text-white p-1 rounded hover:bg-gray-700"
+              className="flex-shrink-0 text-[#7b8ba3] hover:text-[#00f0ff] p-1 rounded-md hover:bg-[#00f0ff]/10 transition-all duration-200"
               title="Copy email"
             >
               {copiedItem === `Email-${row.original.id}` ? (
-                <Check size={14} className="text-green-400" />
+                <Check size={14} className="text-[#00e676]" />
               ) : (
                 <Copy size={14} />
               )}
@@ -501,18 +501,18 @@ const SalesLeads = () => {
         header: "Phone",
         accessorKey: "phone",
         cell: ({ row }) => (
-          <div className="flex items-center space-x-2">
-            <span>{row.original.phone}</span>
+          <div className="flex items-center gap-2">
+            <span className="truncate">{row.original.phone}</span>
             {row.original.phone && (
               <button
                 onClick={() =>
                   copyToClipboard(row.original.phone, "Phone", row.original.id)
                 }
-                className="text-gray-400 hover:text-white p-1 rounded hover:bg-gray-700"
+                className="flex-shrink-0 text-[#7b8ba3] hover:text-[#00f0ff] p-1 rounded-md hover:bg-[#00f0ff]/10 transition-all duration-200"
                 title="Copy phone"
               >
                 {copiedItem === `Phone-${row.original.id}` ? (
-                  <Check size={14} className="text-green-400" />
+                  <Check size={14} className="text-[#00e676]" />
                 ) : (
                   <Copy size={14} />
                 )}
@@ -589,13 +589,13 @@ const SalesLeads = () => {
           canAddDeposit ? (
             <button
               onClick={() => handleAddDeposit(row.original.id)}
-              className="px-2 py-1 bg-green-600 rounded flex items-center space-x-1 hover:bg-green-500 text-sm"
+              className="btn-futuristic px-3 py-1.5 bg-[#00e676]/15 border border-[#00e676]/30 rounded-lg flex items-center gap-1.5 hover:bg-[#00e676]/25 text-[#00e676] text-sm font-medium transition-all duration-300"
             >
               <EuroSign size={14} />
               <span>Add Deposit</span>
             </button>
           ) : (
-            <span className="text-gray-500 text-sm">No access</span>
+            <span className="text-[#4a5568] text-sm">No access</span>
           ),
         enableColumnFilter: false,
       },
@@ -606,8 +606,8 @@ const SalesLeads = () => {
           const date = DateTime.fromISO(row.original.created_at);
           return (
             <div className="text-sm">
-              <div>{date.toFormat("dd/MM/yyyy")}</div>
-              <div className="text-gray-400">{date.toFormat("HH:mm")}</div>
+              <div className="text-[#e8edf5]">{date.toFormat("dd/MM/yyyy")}</div>
+              <div className="text-[#4a5568] text-xs">{date.toFormat("HH:mm")}</div>
             </div>
           );
         },
@@ -630,20 +630,40 @@ const SalesLeads = () => {
   );
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="p-6 space-y-4">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Sales Leads</h1>
-          {loading && (
-            <div className="flex items-center space-x-2 text-sm text-gray-400">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-              <span>Loading all leads...</span>
-            </div>
-          )}
-          <div className="flex space-x-3">
-            <button className="px-4 py-2 bg-gray-700 rounded-lg flex items-center space-x-2 hover:bg-gray-600">
-              <Filter size={16} />
-              <span>Filter</span>
+    <div className="flex flex-col h-full bg-[#0a0e17] relative overflow-hidden">
+      {/* Subtle background grid effect */}
+      <div
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(0,240,255,0.5) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,240,255,0.5) 1px, transparent 1px)
+          `,
+          backgroundSize: '60px 60px',
+        }}
+      />
+
+      {/* Header Section */}
+      <div className="relative z-10 p-4 md:p-6 space-y-4 animate-fade-in-up">
+        {/* Title Row */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <h1 className="neon-heading text-xl md:text-2xl font-bold text-[#e8edf5] tracking-tight">
+              Sales Leads
+            </h1>
+            {loading && (
+              <div className="flex items-center gap-2 text-xs md:text-sm text-[#00f0ff]/70">
+                <div className="neon-spinner h-4 w-4" />
+                <span className="animate-neon-flicker">Syncing data...</span>
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-wrap items-center gap-2">
+            <button className="btn-futuristic px-3 py-2 md:px-4 md:py-2 bg-[#111827] neon-border rounded-lg flex items-center gap-2 hover:border-[#00f0ff]/40 text-[#7b8ba3] hover:text-[#e8edf5] text-sm transition-all duration-300">
+              <Filter size={15} />
+              <span className="hidden sm:inline">Filter</span>
             </button>
             {canPerformAdminActions && (
               <>
@@ -654,38 +674,45 @@ const SalesLeads = () => {
                 />
                 <button
                   onClick={() => setIsImportModalOpen(true)}
-                  className="px-4 py-2 bg-gray-700 rounded-lg flex items-center space-x-2 hover:bg-gray-600"
+                  className="btn-futuristic px-3 py-2 md:px-4 md:py-2 bg-[#111827] neon-border rounded-lg flex items-center gap-2 hover:border-[#00f0ff]/40 text-[#7b8ba3] hover:text-[#e8edf5] text-sm transition-all duration-300"
                 >
-                  <Upload size={16} />
-                  <span>Import</span>
+                  <Upload size={15} />
+                  <span className="hidden sm:inline">Import</span>
                 </button>
                 <button
                   onClick={() => setIsCreateModalOpen(true)}
-                  className="px-4 py-2 bg-green-600 rounded-lg flex items-center space-x-2 hover:bg-green-500"
+                  className="btn-futuristic px-3 py-2 md:px-4 md:py-2 bg-[#00f0ff]/10 border border-[#00f0ff]/30 rounded-lg flex items-center gap-2 text-[#00f0ff] hover:bg-[#00f0ff]/20 hover:border-[#00f0ff]/50 text-sm font-medium transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,240,255,0.15)]"
                 >
-                  <Plus size={16} />
-                  <span>Add Lead</span>
+                  <Plus size={15} />
+                  <span className="hidden sm:inline">Add Lead</span>
                 </button>
               </>
             )}
           </div>
         </div>
 
+        {/* Bulk Actions */}
         <BulkActions
           selectedLeads={selectedLeads}
           statuses={statuses}
           onActionComplete={onActionComplete}
         />
 
+        {/* Lead Count */}
         {leads.length > 0 && (
-          <div className="text-sm text-gray-400">
-            Showing {leads.length} leads (all loaded)
+          <div className="flex items-center gap-2 text-xs md:text-sm animate-slide-in-right">
+            <div className="h-1.5 w-1.5 rounded-full bg-[#00f0ff] animate-pulse" />
+            <span className="text-[#7b8ba3]">
+              Showing <span className="text-[#00f0ff] font-medium">{leads.length}</span> leads
+              <span className="text-[#4a5568] ml-1">(all loaded)</span>
+            </span>
           </div>
         )}
       </div>
 
-      <div className="flex-1 overflow-hidden px-6 pb-6">
-        <div className="bg-gray-800 rounded-lg h-full overflow-hidden">
+      {/* Data Table Section */}
+      <div className="relative z-10 flex-1 overflow-hidden px-4 md:px-6 pb-4 md:pb-6">
+        <div className="glass-panel rounded-xl h-full overflow-hidden animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
           <DataTable
             data={leads}
             columns={columns}
@@ -697,6 +724,7 @@ const SalesLeads = () => {
         </div>
       </div>
 
+      {/* Modals */}
       {canPerformAdminActions && (
         <>
           <CreateLeadModal
