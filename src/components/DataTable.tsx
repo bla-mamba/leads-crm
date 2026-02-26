@@ -109,8 +109,8 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
     pageIndex: 0,
     pageSize: 50,
   });
-  const [selectedDateOptions, setSelectedDateOptions] = useState<{[columnId: string]: string[]}>({});
-  const [customDateRanges, setCustomDateRanges] = useState<{[columnId: string]: [string, string]}>({});
+  const [selectedDateOptions, setSelectedDateOptions] = useState<{ [columnId: string]: string[] }>({});
+  const [customDateRanges, setCustomDateRanges] = useState<{ [columnId: string]: [string, string] }>({});
   const filterRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -157,6 +157,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getPaginationRowModel: getPaginationRowModel(),
+    autoResetPageIndex: false,
   });
 
   // Floating UI setup for filter popover
@@ -170,7 +171,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
-        filterRef.current && 
+        filterRef.current &&
         !filterRef.current.contains(event.target as Node) &&
         !(event.target as Element).closest('.filter-button')
       ) {
@@ -193,18 +194,18 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
   const handleDateOptionChange = (columnId: string, optionValue: string, checked: boolean) => {
     const currentOptions = selectedDateOptions[columnId] || [];
     let newOptions: string[];
-    
+
     if (checked) {
       newOptions = [...currentOptions, optionValue];
     } else {
       newOptions = currentOptions.filter(opt => opt !== optionValue);
     }
-    
+
     setSelectedDateOptions(prev => ({
       ...prev,
       [columnId]: newOptions
     }));
-    
+
     // Apply the filter
     applyDateFilter(columnId, newOptions, customDateRanges[columnId]);
   };
@@ -215,7 +216,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
       ...prev,
       [columnId]: newRange
     }));
-    
+
     // Apply the filter
     applyDateFilter(columnId, selectedDateOptions[columnId] || [], newRange);
   };
@@ -223,9 +224,9 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
   const applyDateFilter = (columnId: string, options: string[], customRange?: [string, string]) => {
     const column = table.getColumn(columnId);
     if (!column) return;
-    
+
     const dateRanges: [string, string][] = [];
-    
+
     // Add predefined option ranges
     options.forEach(optionValue => {
       const option = DATE_FILTER_OPTIONS.find(opt => opt.value === optionValue);
@@ -233,12 +234,12 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
         dateRanges.push(option.getDateRange());
       }
     });
-    
+
     // Add custom range if both dates are provided
     if (customRange && customRange[0] && customRange[1]) {
       dateRanges.push(customRange);
     }
-    
+
     // Set the filter value
     if (dateRanges.length > 0) {
       column.setFilterValue(dateRanges);
@@ -250,7 +251,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
   const clearDateFilter = (columnId: string) => {
     const column = table.getColumn(columnId);
     if (!column) return;
-    
+
     column.setFilterValue(undefined);
     setSelectedDateOptions(prev => ({
       ...prev,
@@ -269,7 +270,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
     if (columnId === 'created_at' || columnId === 'converted_at') {
       const currentOptions = selectedDateOptions[columnId] || [];
       const currentCustomRange = customDateRanges[columnId] || ['', ''];
-      
+
       return (
         <FloatingPortal>
           <div
@@ -312,7 +313,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
                   </button>
                 </div>
               </div>
-              
+
               {/* Predefined Options */}
               <div className="space-y-2 mb-4 max-h-48 overflow-y-auto">
                 {DATE_FILTER_OPTIONS.map((option) => (
@@ -327,7 +328,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
                   </label>
                 ))}
               </div>
-              
+
               {/* Custom Date Range */}
               <div className="border-t border-gray-700 pt-3">
                 <label className="flex items-center space-x-2 cursor-pointer hover:bg-gray-700 p-1 rounded mb-2">
@@ -343,7 +344,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
                   />
                   <span className="text-sm text-white font-medium">Custom</span>
                 </label>
-                
+
                 <div className="ml-6 space-y-2">
                   <div>
                     <label className="block text-xs text-gray-400 mb-1">From:</label>
@@ -367,7 +368,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex justify-end mt-4">
                 <button
                   onClick={() => clearDateFilter(columnId)}
@@ -404,7 +405,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
               className="w-full bg-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
             />
           </div>
-          
+
           <div className="p-2">
             {uniqueValues.map((value) => (
               <label key={value} className="flex items-center px-2 py-1 hover:bg-gray-700 rounded cursor-pointer">
@@ -459,7 +460,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
                             desc: <ChevronDown size={16} />,
                           }[header.column.getIsSorted() as string] ?? null}
                         </div>
-                        
+
                         {header.column.getCanFilter() && (
                           <div className="relative" ref={refs.setReference}>
                             <button
@@ -495,8 +496,8 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
                 className="border-b border-gray-700 hover:bg-gray-800 transition-colors"
               >
                 {row.getVisibleCells().map(cell => (
-                  <td 
-                    key={cell.id} 
+                  <td
+                    key={cell.id}
                     className="px-4 py-3 text-white"
                     style={{ width: cell.column.getSize() }}
                   >
@@ -508,7 +509,7 @@ function DataTable<T>({ data, columns, rowSelection, onRowSelectionChange, onSel
           </tbody>
         </table>
       </div>
-      
+
       <div className="mt-4 flex items-center justify-between px-4 py-3 bg-gray-800 border-t border-gray-700">
         <div className="flex items-center space-x-2 text-sm text-gray-400">
           <span>
