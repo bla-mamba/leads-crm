@@ -70,24 +70,16 @@ const LeadStatuses = () => {
 
   const handleDeleteStatus = async (id: string) => {
     try {
-      // First check if the status is in use
-      const { count, error: countError } = await supabase
-        .from('leads')
-        .select('id', { count: 'exact', head: true })
-        .eq('status', id);
-
-      if (countError) throw countError;
-
-      if (count && count > 0) {
-        toast.error('Cannot delete status that is in use');
-        return;
-      }
+      // OPTIONAL: if you want to update leads using this status to null or default before deleting
+      // await supabase
+      //   .from('leads')
+      //   .update({ status: null }) // or replace null with a default status ID
+      //   .eq('status', id);
 
       const { error } = await supabase
         .from('lead_statuses')
         .delete()
         .eq('id', id)
-        .eq('is_system', false);
 
       if (error) throw error;
 
