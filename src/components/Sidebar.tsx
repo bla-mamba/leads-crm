@@ -17,7 +17,6 @@ import {
 import clsx from "clsx";
 import { supabase, getCurrentUser, type UserProfile } from "../lib/supabase";
 import GlobalSearch from "./GlobalSearch";
-import NotificationBell from "./NotificationBell";
 import toast from "react-hot-toast";
 
 const Sidebar = () => {
@@ -121,10 +120,7 @@ const Sidebar = () => {
         )}
       >
         <div className="h-full overflow-y-auto p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl font-bold">CRM BackOffice</h1>
-            <NotificationBell />
-          </div>
+
           <GlobalSearch />
           {user && (
             <p className="text-sm text-gray-400 mt-4">
@@ -144,10 +140,6 @@ const Sidebar = () => {
 
       <div className="hidden lg:flex w-64 bg-gray-800 p-4 flex-col">
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl font-bold">CRM BackOffice</h1>
-            <NotificationBell />
-          </div>
           <GlobalSearch />
           {user && (
             <p className="text-sm text-gray-400 mt-4">

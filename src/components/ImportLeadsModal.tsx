@@ -89,7 +89,7 @@ const ImportLeadsModal: React.FC<ImportLeadsModalProps> = ({ isOpen, onClose, on
 
     leads.forEach((lead, index) => {
       const rowNum = index + 2; // +2 because Excel starts at 1 and we have a header row
-      
+
       if (!lead.first_name?.trim()) {
         errors.push(`Row ${rowNum}: First name is required`);
       }
@@ -119,15 +119,30 @@ const ImportLeadsModal: React.FC<ImportLeadsModalProps> = ({ isOpen, onClose, on
       const data = await file.arrayBuffer();
       const workbook = read(data);
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = utils.sheet_to_json<ImportedLead>(worksheet, { header: 1 });
+      const jsonData = utils.sheet_to_json(worksheet);
 
-      // Remove header row and empty rows
-      const leads = jsonData.slice(1).filter(row => Object.keys(row).length > 0) as ImportedLead[];
-      
+      const leads: ImportedLead[] = jsonData.map((row: any) => ({
+        first_name: row['First Name (Required)']?.toString().trim() || '',
+        last_name: row['Last Name (Required)']?.toString().trim() || '',
+        email: row['Email (Required, must be unique)']?.toString().trim().toLowerCase() || '',
+        phone: row['Phone (Optional)']?.toString().trim() || '',
+        country: row['Country (Optional)']?.toString().trim() || '',
+        brand: row['Brand (Optional)']?.toString().trim() || '',
+        source: row['Source (Optional)']?.toString().trim() || '',
+        funnel: row['Funnel (Optional)']?.toString().trim() || '',
+        desk: row['Desk (Optional)']?.toString().trim() || '',
+        source_id: row['Source ID (Optional)'] ? Number(row['Source ID (Optional)']) : undefined,
+        investment_experience: row['Investment Experience (Optional - Answer to question)']?.toString().trim() || '',
+        risk_tolerance: row['Risk Tolerance (Optional - Answer to question)']?.toString().trim() || '',
+        investment_goal: row['Investment Goal (Optional - Answer to question)']?.toString().trim() || '',
+        investment_timeframe: row['Investment Timeframe (Optional - Answer to question)']?.toString().trim() || '',
+        monthly_income: row['Monthly Income (Optional - Answer to question)']?.toString().trim() || '',
+        heard_from: row['How did you hear about us? (Optional - Answer to question)']?.toString().trim() || ''
+      }));
       // Validate the data
       const validationErrors = validateLeads(leads);
       setErrors(validationErrors);
-      
+
       if (validationErrors.length === 0) {
         // Get existing leads from database
         const { data: existingLeads, error: existingLeadsError } = await supabase
@@ -175,7 +190,7 @@ const ImportLeadsModal: React.FC<ImportLeadsModalProps> = ({ isOpen, onClose, on
 
   const handleImport = async () => {
     if (!leadsToImport.length) return;
-    
+
     setImporting(true);
     try {
       // First insert the leads

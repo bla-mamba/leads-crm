@@ -272,7 +272,6 @@ If you encounter issues:
 ## Files Modified
 
 The notification system uses these files:
-- `src/components/NotificationBell.tsx` - Bell icon with badge
 - `src/components/NotificationDropdown.tsx` - Notification list
 - `src/hooks/useNotifications.ts` - Notification logic
 - `src/components/AuthGuard.tsx` - Initializes notifications
