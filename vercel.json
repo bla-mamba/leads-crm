@@ -1,17 +1,17 @@
 {
   "routes": [
     {
-      "src": "/(.*)",
+      "source": "/(.*)",
       "has": [
         {
           "type": "ip",
           "value": "213.252.230.97"
         }
       ],
-      "dest": "/index.html"
+      "destination": "/index.html"
     },
     {
-      "src": "/(.*)",
+      "source": "/(.*)",
       "status": 403
     }
   ]
