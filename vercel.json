@@ -1,5 +1,18 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+  "routes": [
+    {
+      "src": "/(.*)",
+      "has": [
+        {
+          "type": "ip",
+          "value": "213.252.230.97"
+        }
+      ],
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "status": 403
+    }
   ]
 }
