@@ -16,9 +16,10 @@ const Login = () => {
   // Popup state
   const [popup, setPopup] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  // NEW: IP restriction
+  // IP restriction states
   const [ip, setIp] = useState<string | null>(null);
   const [accessDenied, setAccessDenied] = useState(false);
+  const [ipChecked, setIpChecked] = useState(false); // wait until IP is verified
 
   useEffect(() => {
     fetch('https://api.ipify.org?format=json')
@@ -28,10 +29,12 @@ const Login = () => {
         if (data.ip !== ALLOWED_IP) {
           setAccessDenied(true);
         }
+        setIpChecked(true);
       })
       .catch(err => {
         console.error('Could not fetch IP:', err);
         setAccessDenied(true);
+        setIpChecked(true);
       });
   }, []);
 
@@ -97,6 +100,9 @@ const Login = () => {
       setPopup(null); // close popup and allow retry on error
     }
   };
+
+  // Wait until IP is checked
+  if (!ipChecked) return null;
 
   // Render Access Denied if IP is not allowed
   if (accessDenied) {
