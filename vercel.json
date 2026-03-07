@@ -1,18 +1,5 @@
 {
-  "routes": [
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "ip",
-          "value": "213.252.230.97"
-        }
-      ],
-      "destination": "/index.html"
-    },
-    {
-      "source": "/(.*)",
-      "status": 403
-    }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api/_middleware" }
   ]
 }
