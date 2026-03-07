@@ -1,8 +1,5 @@
 {
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api/middleware"
-    }
+    { "source": "/(.*)", "destination": "/edge-functions/_middleware.ts" }
   ]
 }
