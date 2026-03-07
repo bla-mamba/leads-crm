@@ -101,13 +101,22 @@ const Login = () => {
     }
   };
 
-  // Wait until IP is checked
-  if (!ipChecked) return null;
+  // Loading screen while checking IP
+  if (!ipChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-indigo-900 to-purple-900">
+        <div className="flex flex-col items-center">
+          <div className="w-16 h-16 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-white text-lg md:text-xl">Checking access...</p>
+        </div>
+      </div>
+    );
+  }
 
-  // Render Access Denied if IP is not allowed
+  // Access denied screen
   if (accessDenied) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white p-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-indigo-900 to-purple-900 text-white p-4">
         <div className="text-center max-w-lg">
           <h1 className="text-3xl font-bold mb-4">Access Denied</h1>
           <p>Your IP ({ip || 'unknown'}) is not authorized to access this page.</p>
@@ -116,6 +125,7 @@ const Login = () => {
     );
   }
 
+  // Main login page
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-indigo-900 to-purple-900 px-4 relative">
 
