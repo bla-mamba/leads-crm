@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { LogIn } from 'lucide-react';
 import UAParser from 'ua-parser-js';
-
-// Allowed IP
-const ALLOWED_IP = '213.252.230.97';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,30 +10,8 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Popup state
+  // NEW: popup state
   const [popup, setPopup] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-
-  // IP restriction states
-  const [ip, setIp] = useState<string | null>(null);
-  const [accessDenied, setAccessDenied] = useState(false);
-  const [ipChecked, setIpChecked] = useState(false); // wait until IP is verified
-
-  useEffect(() => {
-    fetch('https://api.ipify.org?format=json')
-      .then(res => res.json())
-      .then(data => {
-        setIp(data.ip);
-        if (data.ip !== ALLOWED_IP) {
-          setAccessDenied(true);
-        }
-        setIpChecked(true);
-      })
-      .catch(err => {
-        console.error('Could not fetch IP:', err);
-        setAccessDenied(true);
-        setIpChecked(true);
-      });
-  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +50,7 @@ const Login = () => {
         console.error('Network error logging login:', logError);
       }
 
-      // Show success popup
+      // NEW: Show success popup
       setPopup({
         type: 'success',
         message: "Have a great day today from Cobra, wish yall make big money.\nAlways remember big money never comes clean."
@@ -83,7 +58,7 @@ const Login = () => {
 
     } catch (error) {
       console.error('Error logging in:', error);
-      // Show error popup
+      // NEW: Show error popup
       setPopup({
         type: 'error',
         message: "Login failed. Big money takes patience—check your details and try again!"
@@ -93,6 +68,7 @@ const Login = () => {
     }
   };
 
+  // NEW: handle popup button
   const handlePopupClose = () => {
     if (popup?.type === 'success') {
       navigate('/'); // continue flow on success
@@ -101,31 +77,6 @@ const Login = () => {
     }
   };
 
-  // Loading screen while checking IP
-  if (!ipChecked) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-indigo-900 to-purple-900">
-        <div className="flex flex-col items-center">
-          <div className="w-16 h-16 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p className="text-white text-lg md:text-xl">Checking access...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Access denied screen
-  if (accessDenied) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-indigo-900 to-purple-900 text-white p-4">
-        <div className="text-center max-w-lg">
-          <h1 className="text-3xl font-bold mb-4">Access Denied</h1>
-          <p>Your IP ({ip || 'unknown'}) is not authorized to access this page.</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Main login page
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-indigo-900 to-purple-900 px-4 relative">
 
@@ -188,7 +139,7 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Custom Popup Modal */}
+      {/* NEW: Custom Popup Modal */}
       {popup && (
         <div className="absolute inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-gray-900 rounded-2xl p-8 max-w-md text-center shadow-2xl">
