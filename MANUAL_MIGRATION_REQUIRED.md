@@ -1,4 +1,4 @@
-# Manual Migration Required: Notification System
+
 
 ## Issue
 The `lead_notifications` table does not exist in your Supabase database. The migrations need to be applied manually.
