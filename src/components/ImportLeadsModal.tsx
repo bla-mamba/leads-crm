@@ -144,15 +144,21 @@ const ImportLeadsModal: React.FC<ImportLeadsModalProps> = ({ isOpen, onClose, on
       setErrors(validationErrors);
 
       if (validationErrors.length === 0) {
-        // Get existing leads from database
-        const { data: existingLeads, error: existingLeadsError } = await supabase
-          .from('leads')
-          .select('email')
-          .is('api_key_id', null); // Only check leads not from API
+        const existingEmails = new Set<string>();
+        let page = 0;
+        const pageSize = 1000;
+        while (true) {
+          const { data: batch, error: batchError } = await supabase
+            .from('leads')
+            .select('email')
+            .range(page * pageSize, (page + 1) * pageSize - 1);
 
-        if (existingLeadsError) throw existingLeadsError;
-
-        const existingEmails = new Set(existingLeads.map(lead => lead.email.toLowerCase()));
+          if (batchError) throw batchError;
+          if (!batch || batch.length === 0) break;
+          batch.forEach(lead => existingEmails.add(lead.email.toLowerCase()));
+          if (batch.length < pageSize) break;
+          page++;
+        }
         const duplicates: ImportedLead[] = [];
         const uniqueLeads: ImportedLead[] = [];
 
@@ -192,47 +198,53 @@ const ImportLeadsModal: React.FC<ImportLeadsModalProps> = ({ isOpen, onClose, on
     if (!leadsToImport.length) return;
 
     setImporting(true);
+    const BATCH_SIZE = 500;
     try {
-      // First insert the leads
-      const { data: importedLeads, error: leadsError } = await supabase
-        .from('leads')
-        .insert(leadsToImport.map(lead => ({
-          first_name: lead.first_name,
-          last_name: lead.last_name,
-          email: lead.email,
-          phone: lead.phone,
-          country: lead.country,
-          brand: lead.brand,
-          source: lead.source,
-          funnel: lead.funnel,
-          desk: lead.desk,
-          status: 'New',
-          created_at: new Date().toISOString(),
-          last_activity: new Date().toISOString(),
-          has_deposited: false
-        })))
-        .select('id');
+      const allImportedLeads: { id: string }[] = [];
 
-      if (leadsError) throw leadsError;
+      for (let i = 0; i < leadsToImport.length; i += BATCH_SIZE) {
+        const chunk = leadsToImport.slice(i, i + BATCH_SIZE);
+        const { data: importedChunk, error: leadsError } = await supabase
+          .from('leads')
+          .insert(chunk.map(lead => ({
+            first_name: lead.first_name,
+            last_name: lead.last_name,
+            email: lead.email,
+            phone: lead.phone,
+            country: lead.country,
+            brand: lead.brand,
+            source: lead.source,
+            funnel: lead.funnel,
+            desk: lead.desk,
+            status: 'New',
+            created_at: new Date().toISOString(),
+            last_activity: new Date().toISOString(),
+            has_deposited: false
+          })))
+          .select('id');
 
-      // Then insert answers for each lead
-      for (let i = 0; i < importedLeads.length; i++) {
+        if (leadsError) throw leadsError;
+        allImportedLeads.push(...(importedChunk || []));
+      }
+
+      const allAnswers: { lead_id: string; question_id: string; answer: string }[] = [];
+      for (let i = 0; i < allImportedLeads.length; i++) {
         const lead = leadsToImport[i];
-        const leadId = importedLeads[i].id;
+        const leadId = allImportedLeads[i].id;
+        Object.entries(questions).forEach(([field, questionId]) => {
+          const answer = lead[field as keyof ImportedLead] || '';
+          if (answer) {
+            allAnswers.push({ lead_id: leadId, question_id: questionId, answer: answer as string });
+          }
+        });
+      }
 
-        const answers = Object.entries(questions).map(([field, questionId]) => ({
-          lead_id: leadId,
-          question_id: questionId,
-          answer: lead[field as keyof ImportedLead] || ''
-        })).filter(a => a.answer);
-
-        if (answers.length > 0) {
-          const { error: answersError } = await supabase
-            .from('lead_answers')
-            .insert(answers);
-
-          if (answersError) throw answersError;
-        }
+      for (let i = 0; i < allAnswers.length; i += BATCH_SIZE) {
+        const chunk = allAnswers.slice(i, i + BATCH_SIZE);
+        const { error: answersError } = await supabase
+          .from('lead_answers')
+          .insert(chunk);
+        if (answersError) throw answersError;
       }
 
       toast.success(`Successfully imported ${leadsToImport.length} leads`);
