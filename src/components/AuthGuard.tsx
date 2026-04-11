@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase, getCurrentUser } from '../lib/supabase';
-import { useNotifications } from '../hooks/useNotifications';
 import toast from 'react-hot-toast';
 
 interface AuthGuardProps {
@@ -13,8 +12,6 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children, requireAdmin }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
-  const { checkPendingNotifications, setupNotificationSubscription } = useNotifications();
-
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -52,7 +49,6 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children, requireAdmin }) => {
           setAuthorized(true);
         }
 
-        checkPendingNotifications();
       } catch (error) {
         console.error('Auth check failed:', error);
         setAuthorized(false);
@@ -76,23 +72,7 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children, requireAdmin }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate, requireAdmin, checkPendingNotifications]);
-
-  useEffect(() => {
-    let cleanup: (() => void) | undefined;
-
-    if (authorized) {
-      setupNotificationSubscription().then((unsubscribe) => {
-        cleanup = unsubscribe;
-      });
-    }
-
-    return () => {
-      if (cleanup) {
-        cleanup();
-      }
-    };
-  }, [authorized, setupNotificationSubscription]);
+  }, [navigate, requireAdmin]);
 
   if (loading) {
     return (

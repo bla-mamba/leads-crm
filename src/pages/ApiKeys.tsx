@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Copy, Check, X, AlertCircle, ExternalLink, Bell, BellOff } from 'lucide-react';
+import { Plus, Trash2, Copy, Check, X, AlertCircle, ExternalLink } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 import { DateTime } from 'luxon';
@@ -13,7 +13,6 @@ interface ApiKey {
   last_used: string | null;
   source_prefix: string;
   allowed_ips: string[];
-  enable_notifications: boolean;
 }
 
 const ApiKeys = () => {
@@ -90,23 +89,6 @@ const ApiKeys = () => {
     } catch (error) {
       console.error('Error toggling API key:', error);
       toast.error('Failed to update API key');
-    }
-  };
-
-  const handleToggleNotifications = async (id: string, enableNotifications: boolean) => {
-    try {
-      const { error } = await supabase
-        .from('api_keys')
-        .update({ enable_notifications: !enableNotifications })
-        .eq('id', id);
-
-      if (error) throw error;
-
-      toast.success(`Notifications ${enableNotifications ? 'disabled' : 'enabled'}`);
-      fetchApiKeys();
-    } catch (error) {
-      console.error('Error toggling notifications:', error);
-      toast.error('Failed to update notifications setting');
     }
   };
 
@@ -298,20 +280,6 @@ async function getLeads(page = 1, limit = 50) {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleToggleNotifications(key.id, key.enable_notifications);
-                  }}
-                  className={`p-1 rounded ${
-                    key.enable_notifications
-                      ? 'text-blue-400 hover:text-blue-300'
-                      : 'text-gray-500 hover:text-gray-400'
-                  }`}
-                  title={key.enable_notifications ? 'Notifications enabled' : 'Notifications disabled'}
-                >
-                  {key.enable_notifications ? <Bell size={16} /> : <BellOff size={16} />}
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
                     handleToggleKey(key.id, key.is_active);
                   }}
                   className="text-gray-400 hover:text-white"
@@ -358,12 +326,6 @@ async function getLeads(page = 1, limit = 50) {
                   <div>
                     <span className="text-gray-400">Allowed IPs:</span>{' '}
                     {key.allowed_ips?.length > 0 ? key.allowed_ips.join(', ') : 'Any'}
-                  </div>
-                  <div>
-                    <span className="text-gray-400">Notifications:</span>{' '}
-                    <span className={key.enable_notifications ? 'text-green-400' : 'text-gray-500'}>
-                      {key.enable_notifications ? 'Enabled' : 'Disabled'}
-                    </span>
                   </div>
                 </div>
 
